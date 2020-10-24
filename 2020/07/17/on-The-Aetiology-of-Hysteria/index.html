@@ -30,7 +30,7 @@
 <meta property="og:description" content="It is my first time reading Freud’s justification for his theory with support of clinical observations and I think he made many compelling arguments. We see that his aetiology inference had to be base">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-17T01:47:48.000Z">
-<meta property="article:modified_time" content="2020-10-23T17:29:33.027Z">
+<meta property="article:modified_time" content="2020-10-24T04:28:24.409Z">
 <meta property="article:author" content="sjskkxks(zzh)">
 <meta property="article:tag" content="writing">
 <meta property="article:tag" content="psychoanalysis">
@@ -40,7 +40,7 @@
 <link rel="canonical" href="https://xiang233.github.io/2020/07/17/on-The-Aetiology-of-Hysteria/">
 
 
-<script class="page-configurations">
+<script data-pjax class="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
@@ -199,7 +199,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -271,7 +271,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2020-10-24 04:29:33" itemprop="dateModified" datetime="2020-10-24T04:29:33+11:00">2020-10-24</time>
+        <time title="Modified: 2020-10-24 15:28:24" itemprop="dateModified" datetime="2020-10-24T15:28:24+11:00">2020-10-24</time>
       </span>
 
   
@@ -393,7 +393,42 @@
 
   
   <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
   
 
@@ -423,9 +458,11 @@
 
 
 
+    <div class="pjax">
   
 
   
 
+    </div>
 </body>
 </html>

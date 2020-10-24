@@ -36,7 +36,7 @@
 <link rel="canonical" href="https://xiang233.github.io/tags/">
 
 
-<script class="page-configurations">
+<script data-pjax class="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
@@ -196,7 +196,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -253,10 +253,10 @@
       <div class="post-body">
           <div class="tag-cloud">
   <div class="tag-cloud-title">
-    4 tags in total
+    5 tags in total
   </div>
   <div class="tag-cloud-tags">
-    <a href="/tags/art/" style="font-size: 30px;" class="tag-cloud-10">art</a> <a href="/tags/codes/" style="font-size: 12px;" class="tag-cloud-0">codes</a> <a href="/tags/psychoanalysis/" style="font-size: 12px;" class="tag-cloud-0">psychoanalysis</a> <a href="/tags/writing/" style="font-size: 30px;" class="tag-cloud-10">writing</a>
+    <a href="/tags/art/" style="font-size: 30px;" class="tag-cloud-10">art</a> <a href="/tags/codes/" style="font-size: 21px;" class="tag-cloud-5">codes</a> <a href="/tags/music/" style="font-size: 12px;" class="tag-cloud-0">music</a> <a href="/tags/psychoanalysis/" style="font-size: 21px;" class="tag-cloud-5">psychoanalysis</a> <a href="/tags/writing/" style="font-size: 30px;" class="tag-cloud-10">writing</a>
   </div>
 </div>
 
@@ -323,7 +323,42 @@
 
   
   <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
   
 
@@ -353,9 +388,11 @@
 
 
 
+    <div class="pjax">
   
 
   
 
+    </div>
 </body>
 </html>

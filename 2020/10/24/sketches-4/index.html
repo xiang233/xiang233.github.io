@@ -22,17 +22,17 @@
     var CONFIG = {"hostname":"xiang233.github.io","root":"/","scheme":"Muse","version":"8.0.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
   </script>
 
-  <meta name="description" content="(1)   (2)">
+  <meta name="description" content="(1)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="sketches 4">
 <meta property="og:url" content="https://xiang233.github.io/2020/10/24/sketches-4/index.html">
 <meta property="og:site_name" content="100 ways to procrastinate">
-<meta property="og:description" content="(1)   (2)">
+<meta property="og:description" content="(1)">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://xiang233.github.io/2020/10/24/sketches-4/1861603466366_.pic.jpg">
 <meta property="og:image" content="https://xiang233.github.io/2020/10/24/sketches-4/1851603466345_.pic.jpg">
 <meta property="article:published_time" content="2020-10-23T15:20:06.000Z">
-<meta property="article:modified_time" content="2020-10-23T15:21:03.477Z">
+<meta property="article:modified_time" content="2020-10-24T03:56:53.915Z">
 <meta property="article:author" content="sjskkxks(zzh)">
 <meta property="article:tag" content="art">
 <meta name="twitter:card" content="summary">
@@ -42,7 +42,7 @@
 <link rel="canonical" href="https://xiang233.github.io/2020/10/24/sketches-4/">
 
 
-<script class="page-configurations">
+<script data-pjax class="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
@@ -201,7 +201,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -267,7 +267,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2020-10-24 02:20:06 / Modified: 02:21:03" itemprop="dateCreated datePublished" datetime="2020-10-24T02:20:06+11:00">2020-10-24</time>
+      <time title="Created: 2020-10-24 02:20:06 / Modified: 14:56:53" itemprop="dateCreated datePublished" datetime="2020-10-24T02:20:06+11:00">2020-10-24</time>
     </span>
 
   
@@ -282,6 +282,8 @@
     <div class="post-body" itemprop="articleBody">
         <p>(1)</p>
 <img src="/2020/10/24/sketches-4/1861603466366_.pic.jpg" class="" title="img1">
+
+<a id="more"></a>
 
 <p>(2)</p>
 <img src="/2020/10/24/sketches-4/1851603466345_.pic.jpg" class="" title="img2">
@@ -369,7 +371,42 @@
 
   
   <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
 
   
 
@@ -399,9 +436,11 @@
 
 
 
+    <div class="pjax">
   
 
   
 
+    </div>
 </body>
 </html>
