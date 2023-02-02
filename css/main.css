@@ -1882,10 +1882,11 @@ pre code {
 .post-body {
   font-family: Lato, "PingFang SC", "Microsoft YaHei", sans-serif;
   overflow-wrap: break-word;
+  font-size: 0.875em;
 }
 @media (min-width: 1200px) {
   .post-body {
-    font-size: 1.125em;
+    font-size: 1em;
   }
 }
 @media (min-width: 992px) {
@@ -1968,6 +1969,13 @@ pre code {
 .post-body h5:hover .headerlink:hover,
 .post-body h6:hover .headerlink:hover {
   opacity: 1;
+}
+.post-body a {
+  color: #428bca;
+  font-weight: bold;
+}
+.post-body p {
+  line-height: 1.4;
 }
 .post-body .exturl .fa {
   font-size: 0.875em;
