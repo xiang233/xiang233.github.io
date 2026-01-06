@@ -31,7 +31,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://xiang233.github.io/2026/01/05/Canvas-AI-Agent-Hackathon/canvas%20agent.png">
 <meta property="article:published_time" content="2026-01-06T04:34:39.000Z">
-<meta property="article:modified_time" content="2026-01-06T07:23:21.686Z">
+<meta property="article:modified_time" content="2026-01-06T07:36:08.829Z">
 <meta property="article:author" content="sjskkxks(zzh)">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://xiang233.github.io/2026/01/05/Canvas-AI-Agent-Hackathon/canvas%20agent.png">
@@ -223,7 +223,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -302,7 +302,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2026-01-06 01:23:21" itemprop="dateModified" datetime="2026-01-06T01:23:21-06:00">2026-01-06</time>
+        <time title="Modified: 2026-01-06 01:36:08" itemprop="dateModified" datetime="2026-01-06T01:36:08-06:00">2026-01-06</time>
       </span>
 
   
@@ -322,9 +322,9 @@ teammates <strong>DeYu Zhang</strong>, <strong>Mark Song</strong>, and I
 built <strong>Canvas AI Agent</strong>, an LLM-powered assistant
 designed to help students navigate course content directly within
 Canvas. The agent answers questions, summarizes materials, and reminds
-students of relevant deadlines using contextual course data.<br />
-Our project earned a <strong>Runner-Up Award (Top 5 overall)</strong>
-and received $500 in cash prizes.</p>
+students of relevant deadlines using contextual course data. Our project
+earned a <strong>Runner-Up Award (Top 5 overall)</strong> and received
+$500 in cash prizes.</p>
 <h2 id="motivation">Motivation</h2>
 <p>Canvas courses often contain fragmented information spread across
 announcements, files, assignments, and discussion boards. As a result,
@@ -349,17 +349,28 @@ stream incremental responses and progress updates, supporting concurrent
 multi-user sessions</li>
 </ul>
 <h2 id="technical-architecture">Technical Architecture</h2>
-<p><strong>Frontend</strong> - <strong>React + TypeScript</strong><br />
-- Chat-style conversational interface<br />
-- <strong>WebSocket</strong> powered real-time response streaming</p>
-<p><strong>Backend</strong> - <strong>FastAPI</strong> server with
-asynchronous request handling<br />
-- <strong>Azure OpenAI GPT-5</strong> for query understanding, tool
+<p><strong>Frontend</strong></p>
+<ul>
+<li><strong>React + TypeScript</strong><br />
+</li>
+<li>Chat-style conversational interface<br />
+</li>
+<li><strong>WebSocket</strong> powered real-time response streaming</li>
+</ul>
+<p><strong>Backend</strong></p>
+<ul>
+<li><strong>FastAPI</strong> server with asynchronous request
+handling<br />
+</li>
+<li><strong>Azure OpenAI GPT-5</strong> for query understanding, tool
 invocation, and response generation<br />
-- <strong>OpenAI Vector Stores</strong> for semantic search across
+</li>
+<li><strong>OpenAI Vector Stores</strong> for semantic search across
 uploaded course materials<br />
-- <strong>Canvas LMS API</strong> integration for student-accessible
-resources</p>
+</li>
+<li><strong>Canvas LMS API</strong> integration for student-accessible
+resources</li>
+</ul>
 <h2 id="demo-links">Demo &amp; Links</h2>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://github.com/Deyu-Zhang/canvas_ai">Github</a></li>
