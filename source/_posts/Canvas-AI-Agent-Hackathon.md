@@ -4,7 +4,7 @@ date: 2026-01-05 22:34:39
 tags:
 ---
  
- {% asset_img "canvas agent.png" "chat window" %}
+ {% asset_img "canvas agent.jpg" "chat window" %}
 
 ## Overview
 
