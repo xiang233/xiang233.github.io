@@ -279,7 +279,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2026/01/05/Canvas-AI-Agent-Hackathon/" class="post-title-link" itemprop="url">Canvas AI Agent Hackathon</a>
+            <a href="/2026/01/05/Canvas-AI-Agent-Hackathon/" class="post-title-link" itemprop="url">Canvas AI Agent</a>
         </h2>
 
         <div class="post-meta-container">
@@ -297,7 +297,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2026-08-31 10:06:17" itemprop="dateModified" datetime="2026-08-31T10:06:17+08:00">2026-08-31</time>
+        <time title="Modified: 2026-08-31 00:00:00" itemprop="dateModified" datetime="2026-08-31T00:00:00+08:00">2026-08-31</time>
       </span>
 
   
@@ -310,67 +310,110 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p><img src="/2026/01/05/Canvas-AI-Agent-Hackathon/canvas%20agent.jpg" class="" title="chat window"></p>
+          <img src="/2026/01/05/Canvas-AI-Agent-Hackathon/canvas%20agent.jpg" class="" title="Canvas AI Agent">
 <h2 id="overview">Overview</h2>
 <p>At the <strong>Skandalaris Hackathon 2025 (AI Track)</strong>, my
 teammates <strong>DeYu Zhang</strong>, <strong>Mark Song</strong>, and I
-built <strong>Canvas AI Agent</strong>, an LLM-powered assistant
-designed to help students navigate course content directly within
-Canvas. The agent answers questions, summarizes materials, and reminds
-students of relevant deadlines using contextual course data. Our project
-earned a <strong>Runner-Up Award (Top 5 overall)</strong> and received
-$500 in cash prizes.</p>
-<h2 id="motivation">Motivation</h2>
-<p>Canvas courses often contain fragmented information spread across
-announcements, files, assignments, and discussion boards. As a result,
-students spend unnecessary time searching for information instead of
-focusing on learning. Our goal was to build an agent that understands
-course-specific context, not just raw text, and provides answers through
-a clean and intuitive conversational copilot interface with little
-learning curve, especially benefiting accessibility-constrained and
-younger students.</p>
-<h2 id="highlights">Highlights</h2>
+built <strong>Canvas AI Agent</strong>, an LLM-powered assistant that
+answers questions, summarizes materials, and surfaces deadlines from
+contextual Canvas course data. We earned a <strong>Runner-Up Award (Top
+5 overall)</strong> and $500 in prizes.</p>
+<p>Since then I have kept working on my own fork, turning a demo that
+worked into a system I can prove works.</p>
+<h2 id="the-hackathon-build">The hackathon build</h2>
+<p>React + TypeScript chat frontend over WebSocket streaming; FastAPI
+backend with async handling, Azure OpenAI (<code>gpt-4.1-mini</code>)
+for query understanding and tool invocation, OpenAI Vector Stores for
+semantic search over course materials, and the Canvas LMS API for
+student-accessible resources.</p>
+<h2 id="making-it-measurable">Making it measurable</h2>
+<p>The demo worked, but nothing about it was measured. I built the
+evaluation first and let it tell me what to fix: a factorial experiment
+over knowledge-base access and question wording, graded by a
+<strong>different model family</strong> (Claude judging GPT output)
+using a rubric that separates <em>fabrication</em> from <em>false
+refusal</em>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Without KB</th>
+<th>With KB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fully correct</td>
+<td><strong>0 / 18</strong></td>
+<td><strong>17 / 35</strong></td>
+</tr>
+<tr>
+<td>Grounded in course material</td>
+<td>0</td>
+<td><strong>25 / 35</strong></td>
+</tr>
+<tr>
+<td>Refusals</td>
+<td>17</td>
+<td>3</td>
+</tr>
+<tr>
+<td>Fabricated content</td>
+<td>0</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>That asymmetry is the point. Without retrieval the agent politely
+refuses — harmless-looking in a single metric; with retrieval it answers
+correctly far more often but occasionally invents a source. One number
+would have hidden both failure modes.</p>
+<p>Real bugs fell out once the harness existed. Asking "who teaches this
+course?" burned fifteen identical API calls and 460K input tokens before
+giving up: the tool advertised <code>include=teachers</code>, requested
+it, then dropped the field while formatting. A model that asks for
+teachers and receives none concludes it passed the argument wrong — and
+retries forever. Separately, Canvas's announcements endpoint silently
+defaults to a 14-day window: 0 announcements for a concluded course, 18
+with an explicit semester range.</p>
+<p>Both share one root cause: <strong>the model cannot question what it
+cannot see.</strong> API contracts now live in tool descriptions, errors
+surface verbatim (<code>HTTP 404 ... /quizzes</code>, not
+<code>Resource not found</code>), list rendering always reports counts
+including zero, and identical repeated calls are short-circuited. The
+agent now reads the raw 404 and pivots on its own — no prompt rule
+needed.</p>
+<h2 id="other-engineering">Other engineering</h2>
 <ul>
-<li>Integrated <strong>authorized Canvas API actions</strong>, allowing
-the agent to incorporate real student-accessible course operations
-directly into its responses<br />
-</li>
-<li>Implemented <strong>retrieval-augmented generation (RAG)</strong>
-using vector similarity search to accelerate discovery of relevant
-Canvas materials while filtering out unrelated content<br />
-</li>
-<li>Built a <strong>real-time frontend</strong> using WebSockets to
-stream incremental responses and progress updates, supporting concurrent
-multi-user sessions</li>
+<li><strong>Bounded multi-turn memory</strong> — compaction cut an
+eight-turn session from <strong>438K to 166K input tokens
+(62%)</strong>, recall verified intact.</li>
+<li><strong>Per-session agents</strong> — concurrent users run in
+parallel with isolated context, over SSE and WebSocket sharing one event
+model. Worth measuring first: under ReAct with forced tool calling the
+model emits <strong>zero</strong> free-text deltas, so there is nothing
+token-level to stream.</li>
+<li><strong>Read-only as a mechanism, not a convention</strong> — every
+tool carries a <code>side_effect</code> attribute filtered at build
+time, guarded by a CI assertion. Verified by re-enabling a write tool:
+it still cannot get in.</li>
+<li><strong>76 deterministic cases across seven suites</strong> on every
+pull request, Python 3.11 and 3.13, no API keys and no network. Proven
+by planting a phantom tool name and watching CI go red. The expensive
+LLM evals stay manual: a low-change repo produces identical scheduled
+runs at real cost for no new signal.</li>
 </ul>
-<h2 id="technical-architecture">Technical Architecture</h2>
-<p><strong>Frontend</strong></p>
+<h2 id="links">Links</h2>
 <ul>
-<li><strong>React + TypeScript</strong><br />
-</li>
-<li>Chat-style conversational interface<br />
-</li>
-<li><strong>WebSocket</strong> powered real-time response streaming</li>
-</ul>
-<p><strong>Backend</strong></p>
-<ul>
-<li><strong>FastAPI</strong> server with asynchronous request
-handling<br />
-</li>
-<li><strong>Azure OpenAI GPT-5</strong> for query understanding, tool
-invocation, and response generation<br />
-</li>
-<li><strong>OpenAI Vector Stores</strong> for semantic search across
-uploaded course materials<br />
-</li>
-<li><strong>Canvas LMS API</strong> integration for student-accessible
-resources</li>
-</ul>
-<h2 id="demo-links">Demo &amp; Links</h2>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/Deyu-Zhang/canvas_ai">Github</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/xiang233/canvas_ai">My fork</a> — eval
+harness, RAG ablation, CI, streaming, MCP server</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Deyu-Zhang/canvas_ai">Team
+repository</a> — hackathon build</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/xiang233/cf_ai_canvas_agent">Cloudflare
+Workers version</a> — Workers AI + SQLite Durable Objects</li>
 <li><a
-target="_blank" rel="noopener" href="https://docs.google.com/presentation/d/1RhQeK-0zsjlltyZdZD8q8MCvjk9Y4iDnbsi4hZDU2Ak/edit?usp=sharing">Demo</a></li>
+target="_blank" rel="noopener" href="https://docs.google.com/presentation/d/1RhQeK-0zsjlltyZdZD8q8MCvjk9Y4iDnbsi4hZDU2Ak/edit?usp=sharing">Demo
+slides</a></li>
 </ul>
 
       
