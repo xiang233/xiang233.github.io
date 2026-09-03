@@ -1,44 +1,49 @@
 ---
-title: Canvas AI Agent Hackathon
+title: Canvas AI Agent
 date: 2026-01-05 22:34:39
+updated: 2026-08-31
 tags:
 ---
- 
- {% asset_img "canvas agent.jpg" "chat window" %}
+
+{% asset_img "canvas agent.jpg" "Canvas AI Agent" %}
 
 ## Overview
 
-At the **Skandalaris Hackathon 2025 (AI Track)**, my teammates **DeYu Zhang**, **Mark Song**, and I built **Canvas AI Agent**, an LLM-powered assistant designed to help students navigate course content directly within Canvas. The agent answers questions, summarizes materials, and reminds students of relevant deadlines using contextual course data. Our project earned a **Runner-Up Award (Top 5 overall)** and received $500 in cash prizes.
+At the **Skandalaris Hackathon 2025 (AI Track)**, my teammates **DeYu Zhang**, **Mark Song**, and I built **Canvas AI Agent**, an LLM-powered assistant that answers questions, summarizes materials, and surfaces deadlines from contextual Canvas course data. We earned a **Runner-Up Award (Top 5 overall)** and $500 in prizes.
 
-## Motivation
+Since then I have kept working on my own fork, turning a demo that worked into a system I can prove works.
 
-Canvas courses often contain fragmented information spread across announcements, files, assignments, and discussion boards. As a result, students spend unnecessary time searching for information instead of focusing on learning. Our goal was to build an agent that understands course-specific context, not just raw text, and provides answers through a clean and intuitive conversational copilot interface with little learning curve, especially benefiting accessibility-constrained and younger students.
+## The hackathon build
 
-## Highlights
+React + TypeScript chat frontend over WebSocket streaming; FastAPI backend with async handling, Azure OpenAI (`gpt-4.1-mini`) for query understanding and tool invocation, OpenAI Vector Stores for semantic search over course materials, and the Canvas LMS API for student-accessible resources.
 
-- Integrated **authorized Canvas API actions**, allowing the agent to incorporate real student-accessible course operations directly into its responses  
-- Implemented **retrieval-augmented generation (RAG)** using vector similarity search to accelerate discovery of relevant Canvas materials while filtering out unrelated content  
-- Built a **real-time frontend** using WebSockets to stream incremental responses and progress updates, supporting concurrent multi-user sessions  
+## Making it measurable
 
-## Technical Architecture
+The demo worked, but nothing about it was measured. I built the evaluation first and let it tell me what to fix: a factorial experiment over knowledge-base access and question wording, graded by a **different model family** (Claude judging GPT output) using a rubric that separates *fabrication* from *false refusal*.
 
-**Frontend**
+| | Without KB | With KB |
+|---|---|---|
+| Fully correct | **0 / 18** | **17 / 35** |
+| Grounded in course material | 0 | **25 / 35** |
+| Refusals | 17 | 3 |
+| Fabricated content | 0 | 3 |
 
-- **React + TypeScript**  
-- Chat-style conversational interface  
-- **WebSocket** powered real-time response streaming  
+That asymmetry is the point. Without retrieval the agent politely refuses — harmless-looking in a single metric; with retrieval it answers correctly far more often but occasionally invents a source. One number would have hidden both failure modes.
 
-**Backend**
+Real bugs fell out once the harness existed. Asking "who teaches this course?" burned fifteen identical API calls and 460K input tokens before giving up: the tool advertised `include=teachers`, requested it, then dropped the field while formatting. A model that asks for teachers and receives none concludes it passed the argument wrong — and retries forever. Separately, Canvas's announcements endpoint silently defaults to a 14-day window: 0 announcements for a concluded course, 18 with an explicit semester range.
 
-- **FastAPI** server with asynchronous request handling  
-- **Azure OpenAI GPT-5** for query understanding, tool invocation, and response generation  
-- **OpenAI Vector Stores** for semantic search across uploaded course materials  
-- **Canvas LMS API** integration for student-accessible resources  
+Both share one root cause: **the model cannot question what it cannot see.** API contracts now live in tool descriptions, errors surface verbatim (`HTTP 404 ... /quizzes`, not `Resource not found`), list rendering always reports counts including zero, and identical repeated calls are short-circuited. The agent now reads the raw 404 and pivots on its own — no prompt rule needed.
 
+## Other engineering
 
+- **Bounded multi-turn memory** — compaction cut an eight-turn session from **438K to 166K input tokens (62%)**, recall verified intact.
+- **Per-session agents** — concurrent users run in parallel with isolated context, over SSE and WebSocket sharing one event model. Worth measuring first: under ReAct with forced tool calling the model emits **zero** free-text deltas, so there is nothing token-level to stream.
+- **Read-only as a mechanism, not a convention** — every tool carries a `side_effect` attribute filtered at build time, guarded by a CI assertion. Verified by re-enabling a write tool: it still cannot get in.
+- **76 deterministic cases across seven suites** on every pull request, Python 3.11 and 3.13, no API keys and no network. Proven by planting a phantom tool name and watching CI go red. The expensive LLM evals stay manual: a low-change repo produces identical scheduled runs at real cost for no new signal.
 
-## Demo & Links
+## Links
 
-- [Github](https://github.com/Deyu-Zhang/canvas_ai)
-- [Demo](https://docs.google.com/presentation/d/1RhQeK-0zsjlltyZdZD8q8MCvjk9Y4iDnbsi4hZDU2Ak/edit?usp=sharing)
-
+- [My fork](https://github.com/xiang233/canvas_ai) — eval harness, RAG ablation, CI, streaming, MCP server
+- [Team repository](https://github.com/Deyu-Zhang/canvas_ai) — hackathon build
+- [Cloudflare Workers version](https://github.com/xiang233/cf_ai_canvas_agent) — Workers AI + SQLite Durable Objects
+- [Demo slides](https://docs.google.com/presentation/d/1RhQeK-0zsjlltyZdZD8q8MCvjk9Y4iDnbsi4hZDU2Ak/edit?usp=sharing)
