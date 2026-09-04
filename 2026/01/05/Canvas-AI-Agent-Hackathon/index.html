@@ -29,12 +29,16 @@
 <meta property="og:site_name" content="sjskkxks - ZhaoHua">
 <meta property="og:description" content="Overview At the Skandalaris Hackathon 2025 (AI Track), my teammates DeYu Zhang, Mark Song, and I built Canvas AI Agent, an LLM-powered assistant that answers questions, summarizes materials, and surf">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://xiang233.github.io/2026/01/05/Canvas-AI-Agent-Hackathon/canvas%20agent.jpg">
+<meta property="og:image" content="https://xiang233.github.io/2026/01/05/Canvas-AI-Agent-Hackathon/01_landing_light.png">
+<meta property="og:image" content="https://xiang233.github.io/2026/01/05/Canvas-AI-Agent-Hackathon/03_tool_trace.png">
+<meta property="og:image" content="https://xiang233.github.io/2026/01/05/Canvas-AI-Agent-Hackathon/02_course_picker.png">
+<meta property="og:image" content="https://xiang233.github.io/2026/01/05/Canvas-AI-Agent-Hackathon/04_course_only_rag.png">
+<meta property="og:image" content="https://xiang233.github.io/2026/01/05/Canvas-AI-Agent-Hackathon/05_dark_theme.png">
 <meta property="article:published_time" content="2026-01-05T14:34:39.000Z">
 <meta property="article:modified_time" content="2026-08-30T16:00:00.000Z">
 <meta property="article:author" content="sjskkxks(zzh)">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://xiang233.github.io/2026/01/05/Canvas-AI-Agent-Hackathon/canvas%20agent.jpg">
+<meta name="twitter:image" content="https://xiang233.github.io/2026/01/05/Canvas-AI-Agent-Hackathon/01_landing_light.png">
 
 
 <link rel="canonical" href="https://xiang233.github.io/2026/01/05/Canvas-AI-Agent-Hackathon/">
@@ -207,7 +211,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#overview"><span class="nav-number">1.</span> <span class="nav-text">Overview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#the-hackathon-build"><span class="nav-number">2.</span> <span class="nav-text">The hackathon build</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#making-it-measurable"><span class="nav-number">3.</span> <span class="nav-text">Making it measurable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#other-engineering"><span class="nav-number">4.</span> <span class="nav-text">Other engineering</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#links"><span class="nav-number">5.</span> <span class="nav-text">Links</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#overview"><span class="nav-number">1.</span> <span class="nav-text">Overview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#the-hackathon-build"><span class="nav-number">2.</span> <span class="nav-text">The hackathon build</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#making-it-measurable"><span class="nav-number">3.</span> <span class="nav-text">Making it measurable</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#the-interface"><span class="nav-number">4.</span> <span class="nav-text">The interface</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#other-engineering"><span class="nav-number">5.</span> <span class="nav-text">Other engineering</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#links"><span class="nav-number">6.</span> <span class="nav-text">Links</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -315,7 +319,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <img src="/2026/01/05/Canvas-AI-Agent-Hackathon/canvas%20agent.jpg" class="" title="Canvas AI Agent">
+        <img src="/2026/01/05/Canvas-AI-Agent-Hackathon/01_landing_light.png" class="" title="Canvas Student Agent">
 <h2 id="overview">Overview</h2>
 <p>At the <strong>Skandalaris Hackathon 2025 (AI Track)</strong>, my
 teammates <strong>DeYu Zhang</strong>, <strong>Mark Song</strong>, and I
@@ -388,6 +392,21 @@ surface verbatim (<code>HTTP 404 ... /quizzes</code>, not
 including zero, and identical repeated calls are short-circuited. The
 agent now reads the raw 404 and pivots on its own — no prompt rule
 needed.</p>
+<img src="/2026/01/05/Canvas-AI-Agent-Hackathon/03_tool_trace.png" class="" title="Tool trace">
+<p>The same question that once looped fifteen times now resolves in two
+calls, with each step and its latency visible as it streams.</p>
+<h2 id="the-interface">The interface</h2>
+<img src="/2026/01/05/Canvas-AI-Agent-Hackathon/02_course_picker.png" class="" title="Course scope selector">
+<p>Course scope narrows the agent to one class; a <strong>KB</strong>
+badge marks which courses have a knowledge base built from their
+materials.</p>
+<img src="/2026/01/05/Canvas-AI-Agent-Hackathon/04_course_only_rag.png" class="" title="Course-only grounding">
+<p>A grounding toggle switches to <strong>course-only</strong> mode, and
+answers are then labeled by provenance — <em>grounded in course
+materials</em>, or explicitly not found in them. That label is the
+interface counterpart of the attribution classes the RAG evaluation
+measures.</p>
+<img src="/2026/01/05/Canvas-AI-Agent-Hackathon/05_dark_theme.png" class="" title="Dark theme">
 <h2 id="other-engineering">Other engineering</h2>
 <ul>
 <li><strong>Bounded multi-turn memory</strong> — compaction cut an
