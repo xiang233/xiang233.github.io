@@ -5,7 +5,7 @@ updated: 2026-08-31
 tags:
 ---
 
-{% asset_img "01_landing_light.png" "Canvas Student Agent" %}
+{% asset_img "01_landing_light.png" "Canvas AI Agent" %}
 
 ## Overview
 
