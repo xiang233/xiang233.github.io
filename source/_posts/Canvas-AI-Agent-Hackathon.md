@@ -5,7 +5,7 @@ updated: 2026-08-31
 tags:
 ---
 
-{% asset_img "canvas agent.jpg" "Canvas AI Agent" %}
+{% asset_img "01_landing_light.png" "Canvas Student Agent" %}
 
 ## Overview
 
@@ -33,6 +33,22 @@ That asymmetry is the point. Without retrieval the agent politely refuses — ha
 Real bugs fell out once the harness existed. Asking "who teaches this course?" burned fifteen identical API calls and 460K input tokens before giving up: the tool advertised `include=teachers`, requested it, then dropped the field while formatting. A model that asks for teachers and receives none concludes it passed the argument wrong — and retries forever. Separately, Canvas's announcements endpoint silently defaults to a 14-day window: 0 announcements for a concluded course, 18 with an explicit semester range.
 
 Both share one root cause: **the model cannot question what it cannot see.** API contracts now live in tool descriptions, errors surface verbatim (`HTTP 404 ... /quizzes`, not `Resource not found`), list rendering always reports counts including zero, and identical repeated calls are short-circuited. The agent now reads the raw 404 and pivots on its own — no prompt rule needed.
+
+{% asset_img "03_tool_trace.png" "Tool trace" %}
+
+The same question that once looped fifteen times now resolves in two calls, with each step and its latency visible as it streams.
+
+## The interface
+
+{% asset_img "02_course_picker.png" "Course scope selector" %}
+
+Course scope narrows the agent to one class; a **KB** badge marks which courses have a knowledge base built from their materials.
+
+{% asset_img "04_course_only_rag.png" "Course-only grounding" %}
+
+A grounding toggle switches to **course-only** mode, and answers are then labeled by provenance — *grounded in course materials*, or explicitly not found in them. That label is the interface counterpart of the attribution classes the RAG evaluation measures.
+
+{% asset_img "05_dark_theme.png" "Dark theme" %}
 
 ## Other engineering
 
